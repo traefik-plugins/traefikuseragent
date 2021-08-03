@@ -9,13 +9,11 @@ import (
 	mw "github.com/GiGInnovationLabs/traefikuseragent"
 )
 
-func TestGeoIPBasic(t *testing.T) {
-	mwCfg := mw.CreateConfig()
-
+func TestBasic(t *testing.T) {
 	called := false
 	next := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) { called = true })
 
-	instance, err := mw.New(context.TODO(), next, mwCfg, "traefikuseragent")
+	instance, err := mw.New(context.TODO(), next, mw.CreateConfig(), "traefikuseragent")
 	if err != nil {
 		t.Fatalf("Error creating %v", err)
 	}
@@ -29,5 +27,68 @@ func TestGeoIPBasic(t *testing.T) {
 	}
 	if called != true {
 		t.Fatalf("next handler was not called")
+	}
+}
+
+func TestParse(t *testing.T) {
+	next := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {})
+
+	instance, _ := mw.New(context.TODO(), next, mw.CreateConfig(), "traefikuseragent")
+
+	recorder := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "http://localhost", nil)
+	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11")
+
+	instance.ServeHTTP(recorder, req)
+
+	assertHeader(t, req, "X-Device-Mobile", "false")
+	assertHeader(t, req, "X-Device-Os", "Linux")
+	assertHeader(t, req, "X-Device-Browser", "Chrome")
+	assertHeader(t, req, "X-Device-Browser-Version", "23.0.1271.97")
+	assertHeader(t, req, "X-Device-Engine", "AppleWebKit")
+	assertHeader(t, req, "X-Device-Engine-Version", "537.11")
+}
+
+func TestParseNoHeader(t *testing.T) {
+	next := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {})
+
+	instance, _ := mw.New(context.TODO(), next, mw.CreateConfig(), "traefikuseragent")
+
+	recorder := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "http://localhost", nil)
+
+	instance.ServeHTTP(recorder, req)
+
+	assertHeader(t, req, "X-Device-Mobile", "false")
+	assertHeader(t, req, "X-Device-Os", "")
+	assertHeader(t, req, "X-Device-Browser", "")
+	assertHeader(t, req, "X-Device-Browser-Version", "")
+	assertHeader(t, req, "X-Device-Engine", "")
+	assertHeader(t, req, "X-Device-Engine-Version", "")
+}
+
+func TestParseBadFormat(t *testing.T) {
+	next := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {})
+
+	instance, _ := mw.New(context.TODO(), next, mw.CreateConfig(), "traefikuseragent")
+
+	recorder := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "http://localhost", nil)
+	req.Header.Set("User-Agent", "123asd")
+
+	instance.ServeHTTP(recorder, req)
+
+	assertHeader(t, req, "X-Device-Mobile", "false")
+	assertHeader(t, req, "X-Device-Os", "")
+	assertHeader(t, req, "X-Device-Browser", "123asd")
+	assertHeader(t, req, "X-Device-Browser-Version", "")
+	assertHeader(t, req, "X-Device-Engine", "")
+	assertHeader(t, req, "X-Device-Engine-Version", "")
+}
+
+func assertHeader(t *testing.T, req *http.Request, key, expected string) {
+	t.Helper()
+	if req.Header.Get(key) != expected {
+		t.Fatalf("invalid value of header [%s] != %s", key, req.Header.Get(key))
 	}
 }

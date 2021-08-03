@@ -3,10 +3,15 @@ package traefikuseragent
 
 import (
 	"context"
-	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/mssola/user_agent"
+)
+
+const (
+	// UserAgentHeader user agent header.
+	UserAgentHeader = "User-Agent"
 )
 
 // Config the plugin configuration.
@@ -32,10 +37,18 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 }
 
 func (mw *TraefikUserAgent) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
-	ua := user_agent.New("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11")
+	ua := user_agent.New(req.Header.Get(UserAgentHeader))
+
+	req.Header.Set("X-Device-Mobile", strconv.FormatBool(ua.Mobile()))
+	req.Header.Set("X-Device-Os", ua.OSInfo().Name)
 
 	name, version := ua.Browser()
-	log.Printf("@@%v@@%v@@", name, version)
+	req.Header.Set("X-Device-Browser", name)
+	req.Header.Set("X-Device-Browser-Version", version)
+
+	name, version = ua.Engine()
+	req.Header.Set("X-Device-Engine", name)
+	req.Header.Set("X-Device-Engine-Version", version)
 
 	mw.next.ServeHTTP(rw, req)
 }
