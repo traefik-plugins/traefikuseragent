@@ -1,6 +1,6 @@
-displayName: User Agent Processing
+displayName: Device info from User Agent
 
-summary: User Agent Processing
+summary: "Parses User-Agent header to retrieve device information and pass it upstream via HTTP Headers."
 
 type: middleware
 
