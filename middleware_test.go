@@ -37,16 +37,18 @@ func TestParse(t *testing.T) {
 
 	recorder := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "http://localhost", nil)
-	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11")
+	req.Header.Set(mw.UserAgentHeader, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11")
 
 	instance.ServeHTTP(recorder, req)
 
-	assertHeader(t, req, "X-Device-Mobile", "false")
-	assertHeader(t, req, "X-Device-Os", "Linux")
-	assertHeader(t, req, "X-Device-Browser", "Chrome")
-	assertHeader(t, req, "X-Device-Browser-Version", "23.0.1271.97")
-	assertHeader(t, req, "X-Device-Engine", "AppleWebKit")
-	assertHeader(t, req, "X-Device-Engine-Version", "537.11")
+	assertHeader(t, req, mw.DeviceMobileHeader, "false")
+	assertHeader(t, req, mw.DeviceOsHeader, "Linux")
+
+	assertHeader(t, req, mw.DeviceBrowserHeader, "Chrome")
+	assertHeader(t, req, mw.DeviceBrowserVersionHeader, "23.0.1271.97")
+
+	assertHeader(t, req, mw.DeviceEngineHeader, "AppleWebKit")
+	assertHeader(t, req, mw.DeviceEngineVersionHeader, "537.11")
 }
 
 func TestParseNoHeader(t *testing.T) {
@@ -59,12 +61,14 @@ func TestParseNoHeader(t *testing.T) {
 
 	instance.ServeHTTP(recorder, req)
 
-	assertHeader(t, req, "X-Device-Mobile", "false")
-	assertHeader(t, req, "X-Device-Os", "")
-	assertHeader(t, req, "X-Device-Browser", "")
-	assertHeader(t, req, "X-Device-Browser-Version", "")
-	assertHeader(t, req, "X-Device-Engine", "")
-	assertHeader(t, req, "X-Device-Engine-Version", "")
+	assertHeader(t, req, mw.DeviceMobileHeader, "false")
+	assertHeader(t, req, mw.DeviceOsHeader, "")
+
+	assertHeader(t, req, mw.DeviceBrowserHeader, "")
+	assertHeader(t, req, mw.DeviceBrowserVersionHeader, "")
+
+	assertHeader(t, req, mw.DeviceEngineHeader, "")
+	assertHeader(t, req, mw.DeviceEngineVersionHeader, "")
 }
 
 func TestParseBadFormat(t *testing.T) {
@@ -74,16 +78,18 @@ func TestParseBadFormat(t *testing.T) {
 
 	recorder := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "http://localhost", nil)
-	req.Header.Set("User-Agent", "123asd")
+	req.Header.Set(mw.UserAgentHeader, "123asd")
 
 	instance.ServeHTTP(recorder, req)
 
-	assertHeader(t, req, "X-Device-Mobile", "false")
-	assertHeader(t, req, "X-Device-Os", "")
-	assertHeader(t, req, "X-Device-Browser", "123asd")
-	assertHeader(t, req, "X-Device-Browser-Version", "")
-	assertHeader(t, req, "X-Device-Engine", "")
-	assertHeader(t, req, "X-Device-Engine-Version", "")
+	assertHeader(t, req, mw.DeviceMobileHeader, "false")
+	assertHeader(t, req, mw.DeviceOsHeader, "")
+
+	assertHeader(t, req, mw.DeviceBrowserHeader, "123asd")
+	assertHeader(t, req, mw.DeviceBrowserVersionHeader, "")
+
+	assertHeader(t, req, mw.DeviceEngineHeader, "")
+	assertHeader(t, req, mw.DeviceEngineVersionHeader, "")
 }
 
 func assertHeader(t *testing.T, req *http.Request, key, expected string) {

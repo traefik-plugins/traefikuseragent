@@ -12,6 +12,15 @@ import (
 const (
 	// UserAgentHeader user agent header.
 	UserAgentHeader = "User-Agent"
+
+	DeviceMobileHeader = "X-Device-Mobile"
+	DeviceOsHeader     = "X-Device-Os"
+
+	DeviceBrowserHeader        = "X-Device-Browser"
+	DeviceBrowserVersionHeader = "X-Device-Browser-Version"
+
+	DeviceEngineHeader        = "X-Device-Engine"
+	DeviceEngineVersionHeader = "X-Device-Engine-Version"
 )
 
 // Config the plugin configuration.
@@ -39,16 +48,16 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 func (mw *TraefikUserAgent) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	ua := user_agent.New(req.Header.Get(UserAgentHeader))
 
-	req.Header.Set("X-Device-Mobile", strconv.FormatBool(ua.Mobile()))
-	req.Header.Set("X-Device-Os", ua.OSInfo().Name)
+	req.Header.Set(DeviceMobileHeader, strconv.FormatBool(ua.Mobile()))
+	req.Header.Set(DeviceOsHeader, ua.OSInfo().Name)
 
 	name, version := ua.Browser()
-	req.Header.Set("X-Device-Browser", name)
-	req.Header.Set("X-Device-Browser-Version", version)
+	req.Header.Set(DeviceBrowserHeader, name)
+	req.Header.Set(DeviceBrowserVersionHeader, version)
 
 	name, version = ua.Engine()
-	req.Header.Set("X-Device-Engine", name)
-	req.Header.Set("X-Device-Engine-Version", version)
+	req.Header.Set(DeviceEngineHeader, name)
+	req.Header.Set(DeviceEngineVersionHeader, version)
 
 	mw.next.ServeHTTP(rw, req)
 }
