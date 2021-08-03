@@ -10,16 +10,22 @@ import (
 )
 
 const (
-	// UserAgentHeader user agent header.
+	// UserAgentHeader header.
 	UserAgentHeader = "User-Agent"
 
+	// DeviceMobileHeader header.
 	DeviceMobileHeader = "X-Device-Mobile"
-	DeviceOsHeader     = "X-Device-Os"
+	// DeviceOsHeader header.
+	DeviceOsHeader = "X-Device-Os"
 
-	DeviceBrowserHeader        = "X-Device-Browser"
+	// DeviceBrowserHeader header.
+	DeviceBrowserHeader = "X-Device-Browser"
+	// DeviceBrowserVersionHeader header.
 	DeviceBrowserVersionHeader = "X-Device-Browser-Version"
 
-	DeviceEngineHeader        = "X-Device-Engine"
+	// DeviceEngineHeader header.
+	DeviceEngineHeader = "X-Device-Engine"
+	// DeviceEngineVersionHeader header.
 	DeviceEngineVersionHeader = "X-Device-Engine-Version"
 )
 
