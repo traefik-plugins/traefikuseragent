@@ -1,3 +1,4 @@
+
 .PHONY: lint test vendor clean
 
 export GO111MODULE=on
