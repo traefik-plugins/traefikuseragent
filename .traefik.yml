@@ -1,11 +1,9 @@
-displayName: Demo Plugin
+displayName: User Agent Processing
+
+summary: User Agent Processing
+
 type: middleware
 
-import: github.com/traefik/plugindemo
+import: github.com/GiGInnovationLabs/traefikuseragent
 
-summary: '[Demo] Add Request Header'
-
-testData:
-  Headers:
-    X-Demo: test
-    X-URL: '{{URL}}'
+testData: {}
