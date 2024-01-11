@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	mw "github.com/GiGInnovationLabs/traefikuseragent"
+	mw "github.com/traefik-plugins/traefikuseragent"
 )
 
 func TestBasic(t *testing.T) {

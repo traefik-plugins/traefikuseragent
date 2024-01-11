@@ -1,4 +1,4 @@
-module github.com/GiGInnovationLabs/traefikuseragent
+module github.com/traefik-plugins/traefikuseragent
 
 go 1.16
 

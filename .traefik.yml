@@ -4,6 +4,6 @@ summary: "Parses User-Agent header to retrieve device information and pass it up
 
 type: middleware
 
-import: github.com/GiGInnovationLabs/traefikuseragent
+import: github.com/traefik-plugins/traefikuseragent
 
 testData: {}
