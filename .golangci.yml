@@ -50,6 +50,8 @@ linters:
     - lll
     - gomnd
     - forbidigo
+    - nosnakecase
+    - varnamelen
 
 issues:
   exclude-use-default: false
